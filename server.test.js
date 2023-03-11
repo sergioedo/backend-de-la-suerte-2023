@@ -1,6 +1,5 @@
 const request = require('supertest')
-const express = require('express')
-const app = express()
+const app = require('./server')()
 
 test('Create an order with POST to /menu/order', async () => {
     const response = await request(app)
