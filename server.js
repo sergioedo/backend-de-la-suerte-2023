@@ -1,9 +1,8 @@
 const express = require('express')
 
-let orderDate, orderId = 1
-
 module.exports = () => {
     const app = express()
+    let orderDate, orderId = 1
     app.post('/menu/order', (req, res) => {
         orderDate = Date.now()
         res.status(201).send({ id: orderId, createdAt: orderDate })
