@@ -22,6 +22,6 @@ test('Query order and check createdAt', async () => {
     const response = await request(appInstance)
         .get(`/menu/order/${id}`)
         .expect('Content-Type', /json/)
-        .expect(201)
+        .expect(200)
     expect(response.body.createdAt).toBe(createdAt)
 })
