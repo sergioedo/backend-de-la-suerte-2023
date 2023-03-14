@@ -42,5 +42,5 @@ test('Set/Get Elements from entity', () => {
         .set('👨‍💼', '👮‍♂️')
 
     expect(entity.getElements()[0].get('🆔')).toBe('1️⃣')
-    expect(entity.getElement('🆔', '1️⃣').get('👨‍💼')).toBe('👮‍♂️')
+    expect(entity.getElementsByField('🆔', '1️⃣')[0].get('👨‍💼')).toBe('👮‍♂️')
 })
