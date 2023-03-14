@@ -11,7 +11,7 @@ const createEmojiDB = (dbId) => {
                     const fields = {}
                     const element = {
                         set: (field, value) => {
-                            fields[field] = value
+                            fields[field] = String(value)
                             return element
                         },
                         get: (field) => fields[field]

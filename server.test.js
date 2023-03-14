@@ -18,7 +18,7 @@ test('Create an order with POST to /menu/order', async () => {
     const response = await createOrder(app())
 
     expect(response.body.createdAt).toBeDefined()
-    expect(testTimestamp).toBeLessThan(response.body.createdAt)
+    expect(testTimestamp).toBeLessThan(Number(response.body.createdAt))
 })
 
 test('Query order and check createdAt', async () => {
