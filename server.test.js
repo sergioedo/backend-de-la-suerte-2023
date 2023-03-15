@@ -22,11 +22,13 @@ test('Create an order with POST to /menu/order', async () => {
 })
 
 test('Query order and check createdAt', async () => {
-    const createResponse = await createOrder(app())
+    const appInstance = app()
+    //TODO: test with different instances (test persistence)
+    const createResponse = await createOrder(appInstance)
     expect(createResponse.body.id).toBeDefined()
     expect(createResponse.body.createdAt).toBeDefined()
 
     const { id, createdAt } = createResponse.body
-    const response = await getOrder(app(), id)
+    const response = await getOrder(appInstance, id)
     expect(response.body.createdAt).toBe(createdAt)
 })

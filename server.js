@@ -3,7 +3,7 @@ const emojiBackend = require('./backend')
 
 module.exports = () => {
     const app = express()
-    const db = emojiBackend.createEmojiDB('👨‍🍳')
+    const db = emojiBackend.createEmojiDB('👨‍🍳', true)
     const orderEntity = db.createEntity('🍽', ['🆔', '🕓'])
 
     app.post('/menu/order', (req, res) => {
