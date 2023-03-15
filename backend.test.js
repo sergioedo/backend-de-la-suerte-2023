@@ -1,6 +1,6 @@
 const backend = require('./backend')
 
-const createDB = (dbId) => backend.createEmojiDB(dbId)
+const createDB = (dbId) => backend.createEmojiDB(dbId, true)
 const createEntity = (dbId, entityId, entityFields) => {
     const db = createDB(dbId)
     return db.createEntity(entityId, entityFields)
