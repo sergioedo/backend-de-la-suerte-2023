@@ -2,6 +2,8 @@ const express = require('express')
 const emojiBackend = require('./backend')
 const swaggerUi = require('swagger-ui-express')
 const swaggerJsdoc = require('swagger-jsdoc')
+const bodyParser = require('body-parser')
+const jsonParser = bodyParser.json()
 
 const options = {
     definition: {
@@ -19,7 +21,7 @@ const swaggerSpec = swaggerJsdoc(options)
 module.exports = () => {
     const app = express()
     const db = emojiBackend.createEmojiDB('👨‍🍳', true)
-    const orderEntity = db.createEntity('🍽', ['🆔', '🕓'])
+    const orderEntity = db.createEntity('🍽', ['🆔', '🕓', '🪑'])
 
     /**
     * @openapi
@@ -27,6 +29,16 @@ module.exports = () => {
     *   post:
     *     summary: Pide una comanda al restaurante
     *     tags: [orders]
+    *     requestBody:
+    *       description: Información sobre la comanda a crear
+    *       content: 
+    *         application/json:
+    *           schema:
+    *             type: object
+    *             properties: 
+    *               table:
+    *                 type: number
+    *                 description: número de la mesa que ha pedido la comanda
     *     produces: 
     *       - application/json
     *     responses:
@@ -38,15 +50,24 @@ module.exports = () => {
     *             id:
     *               type: string
     *               description: identificador de la comanda
+    *             table:
+    *               type: number
+    *               description: número de la mesa que ha pedido la comanda
     *             createdAt:
     *               type: string
     *               description: fecha de creación de la comanda en formato UNIX timestamp
     */
-    app.post('/menu/order', (req, res) => {
-        const order = orderEntity.createElement()
-            .set('🆔', orderEntity.getElements().length + 1)
-            .set('🕓', Date.now())
-        res.status(201).send({ id: order.get('🆔'), createdAt: order.get('🕓') })
+    app.post('/menu/order', jsonParser, (req, res) => {
+        const { table } = req.body
+        if (!Number.isInteger(table)) {
+            res.status(400).send({ error: 'table field is mandatory and must be numeric' })
+        } else {
+            const order = orderEntity.createElement()
+                .set('🆔', orderEntity.getElements().length + 1)
+                .set('🪑', table)
+                .set('🕓', Date.now())
+            res.status(201).send({ id: order.get('🆔'), table: Number(order.get('🪑')), createdAt: order.get('🕓') })
+        }
     })
 
     /**
@@ -68,7 +89,10 @@ module.exports = () => {
     *         description: Devuelve la información de la comanda
     *         schema:
     *           type: object
-    *           properties: 
+    *           properties:
+    *             table:
+    *               type: number
+    *               description: número de la mesa que ha pedido la comanda
     *             createdAt:
     *               type: string
     *               description: fecha de creación de la comanda en formato UNIX timestamp
@@ -85,7 +109,7 @@ module.exports = () => {
         const orderId = req.param('orderId')
         const order = orderEntity.getElementsByField('🆔', orderId)
         if (order.length > 0) {
-            res.status(200).send({ createdAt: order[0].get('🕓') })
+            res.status(200).send({ table: Number(order[0].get('🪑')), createdAt: order[0].get('🕓') })
         } else {
             res.status(404).send({ error: `order ${orderId} not found` })
         }
