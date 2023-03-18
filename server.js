@@ -26,11 +26,21 @@ module.exports = () => {
     * /menu/order:
     *   post:
     *     summary: Pide una comanda al restaurante
+    *     tags: [orders]
     *     produces: 
     *       - application/json
     *     responses:
     *       201:
     *         description: Devuelve la información de la comanda
+    *         schema:
+    *           type: object
+    *           properties: 
+    *             id:
+    *               type: string
+    *               description: identificador de la comanda
+    *             createdAt:
+    *               type: string
+    *               description: fecha de creación de la comanda en formato UNIX timestamp
     */
     app.post('/menu/order', (req, res) => {
         const order = orderEntity.createElement()
@@ -44,6 +54,7 @@ module.exports = () => {
     * /menu/order/{orderId}:
     *   get:
     *     summary: Recupera la información de una comanda
+    *     tags: [orders]
     *     produces: 
     *       - application/json
     *     parameters:
@@ -55,6 +66,20 @@ module.exports = () => {
     *     responses:
     *       200:
     *         description: Devuelve la información de la comanda
+    *         schema:
+    *           type: object
+    *           properties: 
+    *             createdAt:
+    *               type: string
+    *               description: fecha de creación de la comanda en formato UNIX timestamp
+    *       404:
+    *         description: La comanda no existe
+    *         schema:
+    *           type: object
+    *           properties: 
+    *             error:
+    *               type: string
+    *               description: descripción del error
     */
     app.get('/menu/order/:orderId', (req, res) => {
         const orderId = req.param('orderId')
