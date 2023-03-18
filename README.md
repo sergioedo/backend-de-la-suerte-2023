@@ -35,6 +35,7 @@ Propondremos 3 retos en 3 semanas y remataremos con una sesión en directo prime
 | Karlos                      | Xata          |        |        |        |         |       |
 | José Ángel Martínez         | Cloudflare D1 |        |        |        |         |       |
 | José Manuel Gómez           | CockroachDB   |        |        |        |         |       |
+| Juan Andrés Jiménez         | Planetscale   |        |        |        |         |       |
 | Sergi Edo                   | Troleado      |        |        |        |         |       |
 | Imanol Valero               | Planetscale   |        |        |        |         |       |
 | Yuri                        | SurrealDB     |        |        |        |         |       |
@@ -124,7 +125,7 @@ Así que los "troleados" tenéis que resolver el desafío con estas condiciones 
 
 ![6409974cce829832393392](https://user-images.githubusercontent.com/1122071/223962884-3ed576cc-cd23-48fd-b543-00c2489bb4cb.gif)
 
-## Reto 1: Hasta loz zombies tienen cerebro
+## Reto 1: Hasta los zombies tienen cerebro
 
 Te ha tocado un backend en suerte y tienes que ponerlo a trabajar.
 
@@ -164,9 +165,58 @@ Habla con Dani ;)
 
 &nbsp;
 
-## Reto 2
+## Reto 2: Oído cocina
 
-_(Cocinándose hasta el 16 de Marzo, ese día lo conoceremos)_
+El sistema está listo, ¡pongámoslo a trabajar!
+
+Tu sistema de captura de comandas tiene que ampliarse y guardar comandas en un formato como este:
+
+```
+Order {
+  table: Number
+  createdAt: Date
+  dishes: [
+    {
+      name: String,
+      quantity: Number
+    }
+  ]
+}
+```
+
+- `Number` es entero
+- `Date` en formato ISO-8601 UTC Zero (Ejemplo: 2023-03-15T13:03:42Z)
+- `createdAt` es el momento en el que entra la comanda en el sistema
+- `dishes` es una colección de platos, con nombre y cantidades
+
+**Requisitos**
+
+- Las comandas se acumulan en forma de cola, la primera que entra es la más prioritaria (FIFO).
+- No hay límite de platos en cada comanda.
+- Tienes que fijar un límite en el máximo de comandas asumibles por la cocina. Por ejemplo, 5.
+- Cuando se llega al límite, no se aceptan más comandas y se envía un mensaje de error.
+- Solo puedes procesar las comandas borrándolas todas a la vez (esto cambiará en el Reto 3, pero no sabes cómo, no te adelantes)
+
+**Imprescindible**
+
+- Si entra el plato "ESPECIAL ZOMBIE" inmediatamente pasa a estar el primero en la cola.
+
+**Interfaz**
+
+- En la API, web o app que estés montando tienen que verse las comandas en el orden adecuado
+
+**Requisito memorable**
+
+- Tienes que elaborar un menú con al menos 4 platos especiales para Zombies. Ponle cariño e imaginación ;)
+
+&nbsp;
+
+### Reparto de puntos
+
+- 20 puntos si entregas el resultado antes del día 25 de Marzo (inclusive)
+- 10 puntos si lo entregas después.
+
+Máximo de puntos en este reto: 20 (de momento, durante la próxima semana habrá sorpresa)
 
 &nbsp;
 
@@ -176,7 +226,7 @@ _(Cocinándose hasta el 16 de Marzo, ese día lo conoceremos)_
 
 ## Reto 3:
 
-_(Cocinándose a fuego lento hasta el 23 de Marzo)_
+_(Cocinándose a fuego lento hasta el 24 de Marzo)_
 
 &nbsp;
 
