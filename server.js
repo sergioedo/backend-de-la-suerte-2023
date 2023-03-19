@@ -106,7 +106,7 @@ module.exports = () => {
     *               description: descripción del error
     */
     app.get('/menu/order/:orderId', (req, res) => {
-        const orderId = req.param('orderId')
+        const { orderId } = req.params
         const order = orderEntity.getElementsByField('🆔', orderId)
         if (order.length > 0) {
             res.status(200).send({ table: Number(order[0].get('🪑')), createdAt: order[0].get('🕓') })
