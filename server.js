@@ -9,7 +9,7 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Zombies Restaurant 🍽🧟',
+            title: 'Zombies Restaurant API 🍽🧟',
             version: '1.0.0',
         },
     },
@@ -26,6 +26,50 @@ module.exports = () => {
 
     /**
     * @openapi
+    * definitions:
+    *   OrderRequest:
+    *     type: object
+    *     properties: 
+    *       table:
+    *         type: number
+    *         description: número de la mesa que ha pedido la comanda
+    *         example: 666
+    *       dishes:
+    *         type: array
+    *         description: lista de platos de la comanda y cantidad de cada uno
+    *         items:
+    *           type: object
+    *           properties:
+    *             name:
+    *               type: string
+    *               description: Plato pedido
+    *             quantity:
+    *               type: number
+    *               description: Cantidad del plato pedido
+    *         example:
+    *           - name: 'Ensalada de ojos frescos'
+    *             quantity: 3
+    *           - name: 'Carpaccio de piel muerta'
+    *             quantity: 1
+    *           - name: 'Hamburguesa de gato zombie'
+    *             quantity: 2
+    *   Order:
+    *     allOf:
+    *       - $ref: '#/definitions/OrderRequest'
+    *       - type: object
+    *         properties: 
+    *           id:
+    *             type: string
+    *             description: identificador de la comanda
+    *             example: "13"
+    *           createdAt:
+    *             type: string
+    *             description: fecha de creación de la comanda en formato UNIX timestamp
+    *             example: "1679265217763"
+    */
+
+    /**
+    * @openapi
     * /menu/order:
     *   post:
     *     summary: Pide una comanda al restaurante
@@ -35,49 +79,16 @@ module.exports = () => {
     *       content: 
     *         application/json:
     *           schema:
-    *             type: object
-    *             properties: 
-    *               table:
-    *                 type: number
-    *                 description: número de la mesa que ha pedido la comanda
-    *               dishes:
-    *                 type: array
-    *                 description: lista de platos de la comanda y cantidad de cada uno
-    *                 items:
-    *                   type: object
-    *                   properties: 
-    *                     name:
-    *                       type: string
-    *                       description: Plato pedido
-    *                     quantity:
-    *                       type: number
-    *                       description: Cantidad del plato pedido
-    *           example:
-    *             table: 666
-    *             dishes:
-    *               - name: 'Ensalada de ojos frescos'
-    *                 quantity: 3
-    *               - name: 'Carpaccio de piel muerta'
-    *                 quantity: 1
-    *               - name: 'Hamburguesa de gato zombie'
-    *                 quantity: 2
+    *             $ref: '#/definitions/OrderRequest'
     *     produces: 
     *       - application/json
     *     responses:
     *       201:
     *         description: Devuelve la información de la comanda
-    *         schema:
-    *           type: object
-    *           properties: 
-    *             id:
-    *               type: string
-    *               description: identificador de la comanda
-    *             table:
-    *               type: number
-    *               description: número de la mesa que ha pedido la comanda
-    *             createdAt:
-    *               type: string
-    *               description: fecha de creación de la comanda en formato UNIX timestamp
+    *         content:
+    *           application/json:
+    *             schema:
+    *               $ref: '#/definitions/Order'
     */
     app.post('/menu/order', jsonParser, (req, res) => {
         const { table, dishes = [] } = req.body
@@ -121,35 +132,22 @@ module.exports = () => {
     *     responses:
     *       200:
     *         description: Devuelve la información de la comanda
-    *         schema:
-    *           type: object
-    *           properties:
-    *             table:
-    *               type: number
-    *               description: número de la mesa que ha pedido la comanda
-    *             dishes:
-    *               type: array
-    *               description: lista de platos de la comanda y cantidad de cada uno
-    *               items:
-    *                 type: object
-    *                 properties: 
-    *                   name:
-    *                     type: string
-    *                     description: Plato pedido
-    *                   quantity:
-    *                     type: number
-    *                     description: Cantidad del plato pedido
-    *             createdAt:
-    *               type: string
-    *               description: fecha de creación de la comanda en formato UNIX timestamp
+    *         content: 
+    *           application/json:
+    *             schema:
+    *               $ref: '#/definitions/Order'
     *       404:
     *         description: La comanda no existe
-    *         schema:
-    *           type: object
-    *           properties: 
-    *             error:
-    *               type: string
-    *               description: descripción del error
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties: 
+    *                 error:
+    *                   type: string
+    *                   description: descripción del error
+    *                   example: 'Order <12345> not found'
+    *                   
     */
     app.get('/menu/order/:orderId', (req, res) => {
         const { orderId } = req.params
