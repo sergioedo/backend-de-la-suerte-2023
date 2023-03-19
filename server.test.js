@@ -15,6 +15,12 @@ const getOrder = async (app, id) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
+const getOrders = async (app, id) =>
+    request(app)
+        .get(`/menu/orders`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+
 const testOrder = {
     table: 13,
     dishes: [
@@ -56,4 +62,20 @@ test('Query order and check fields', async () => {
     expect(response.body.table).toBe(testOrder.table)
     expect(response.body.dishes.length).toBe(testOrder.dishes.length)
     expect(response.body.createdAt).toBe(createdAt)
+})
+
+test('Query order list with /menu/orders', async () => {
+    const appInstance = app()
+    const response1 = await createOrder(appInstance, testOrder)
+    const response2 = await createOrder(appInstance, testOrder)
+    const response3 = await createOrder(appInstance, testOrder)
+
+    const expectedOrdersIdList = []
+    expectedOrdersIdList.push(response1.body.id)
+    expectedOrdersIdList.push(response2.body.id)
+    expectedOrdersIdList.push(response3.body.id)
+
+    const { body: orders } = await getOrders(appInstance)
+    const ordersIdList = orders.map(order => order.id)
+    expect(JSON.stringify(expectedOrdersIdList)).toBe(JSON.stringify(ordersIdList))
 })

@@ -165,6 +165,44 @@ module.exports = () => {
         }
     })
 
+    /**
+    * @openapi
+    * /menu/orders:
+    *   get:
+    *     summary: Recupera la información de todas las comandas ordenadas
+    *     tags: [orders]
+    *     produces: 
+    *       - application/json
+    *     responses:
+    *       200:
+    *         description: Devuelve una lista con la información de todas las comandas ordenadas
+    *         content: 
+    *           application/json:
+    *             schema:
+    *               type: array
+    *               items:
+    *                   $ref: '#/definitions/Order'        
+    */
+    app.get('/menu/orders', (req, res) => {
+        const responseOrders = []
+        orderEntity.getElements().map(order => {
+            const orderId = order.get('🆔')
+            const orderDishes = orderDishesEntity.getElementsByField('📑', orderId).map(orderElement => {
+                return {
+                    name: orderElement.get('🍽'),
+                    quantity: Number(orderElement.get('🔢'))
+                }
+            })
+            responseOrders.push({
+                id: orderId,
+                table: Number(order.get('🪑')),
+                dishes: orderDishes,
+                createdAt: order.get('🕓')
+            })
+        })
+        res.status(200).send(responseOrders)
+    })
+
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     return app
