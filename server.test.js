@@ -15,7 +15,7 @@ const getOrder = async (app, id) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
-const getOrders = async (app, id) =>
+const getOrders = async (app) =>
     request(app)
         .get(`/menu/orders`)
         .expect('Content-Type', /json/)

@@ -1,9 +1,9 @@
 const express = require('express')
-const emojiBackend = require('./backend')
 const swaggerUi = require('swagger-ui-express')
 const swaggerJsdoc = require('swagger-jsdoc')
 const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
+const ordersModule = require('./orders')
 
 const options = {
     definition: {
@@ -20,9 +20,7 @@ const swaggerSpec = swaggerJsdoc(options)
 
 module.exports = () => {
     const app = express()
-    const db = emojiBackend.createEmojiDB('👨‍🍳', true)
-    const orderEntity = db.createEntity('📑', ['🆔', '🕓', '🪑'])
-    const orderDishesEntity = db.createEntity('🗒', ['📑', '🍽', '🔢'])
+    const orders = ordersModule()
 
     /**
     * @openapi
@@ -95,23 +93,8 @@ module.exports = () => {
         if (!Number.isInteger(table)) {
             res.status(400).send({ error: 'table field is mandatory and must be numeric' })
         } else {
-            const orderId = orderEntity.getElements().length + 1
-            const order = orderEntity.createElement()
-                .set('🆔', orderId)
-                .set('🪑', table)
-                .set('🕓', Date.now())
-            const orderDishes = dishes.map(({ name, quantity }) => {
-                return orderDishesEntity.createElement()
-                    .set('📑', orderId)
-                    .set('🍽', name)
-                    .set('🔢', quantity)
-            }).map(orderElement => {
-                return {
-                    name: orderElement.get('🍽'),
-                    quantity: Number(orderElement.get('🔢'))
-                }
-            })
-            res.status(201).send({ id: order.get('🆔'), table: Number(order.get('🪑')), dishes: orderDishes, createdAt: order.get('🕓') })
+            const order = orders.createOrder(table, dishes)
+            res.status(201).send(order)
         }
     })
 
@@ -151,17 +134,11 @@ module.exports = () => {
     */
     app.get('/menu/order/:orderId', (req, res) => {
         const { orderId } = req.params
-        const order = orderEntity.getElementsByField('🆔', orderId)
-        const orderDishes = orderDishesEntity.getElementsByField('📑', orderId).map(orderElement => {
-            return {
-                name: orderElement.get('🍽'),
-                quantity: Number(orderElement.get('🔢'))
-            }
-        })
-        if (order.length > 0) {
-            res.status(200).send({ table: Number(order[0].get('🪑')), dishes: orderDishes, createdAt: order[0].get('🕓') })
-        } else {
-            res.status(404).send({ error: `order ${orderId} not found` })
+        try {
+            const order = orders.getOrder(orderId)
+            res.status(200).send(order)
+        } catch (error) {
+            res.status(404).send({ error })
         }
     })
 
@@ -184,23 +161,7 @@ module.exports = () => {
     *                   $ref: '#/definitions/Order'        
     */
     app.get('/menu/orders', (req, res) => {
-        const responseOrders = []
-        orderEntity.getElements().map(order => {
-            const orderId = order.get('🆔')
-            const orderDishes = orderDishesEntity.getElementsByField('📑', orderId).map(orderElement => {
-                return {
-                    name: orderElement.get('🍽'),
-                    quantity: Number(orderElement.get('🔢'))
-                }
-            })
-            responseOrders.push({
-                id: orderId,
-                table: Number(order.get('🪑')),
-                dishes: orderDishes,
-                createdAt: order.get('🕓')
-            })
-        })
-        res.status(200).send(responseOrders)
+        res.status(200).send(orders.getOrders())
     })
 
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
