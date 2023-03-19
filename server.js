@@ -21,7 +21,8 @@ const swaggerSpec = swaggerJsdoc(options)
 module.exports = () => {
     const app = express()
     const db = emojiBackend.createEmojiDB('👨‍🍳', true)
-    const orderEntity = db.createEntity('🍽', ['🆔', '🕓', '🪑'])
+    const orderEntity = db.createEntity('📑', ['🆔', '🕓', '🪑'])
+    const orderDishesEntity = db.createEntity('🗒', ['📑', '🍽', '🔢'])
 
     /**
     * @openapi
@@ -39,6 +40,27 @@ module.exports = () => {
     *               table:
     *                 type: number
     *                 description: número de la mesa que ha pedido la comanda
+    *               dishes:
+    *                 type: array
+    *                 description: lista de platos de la comanda y cantidad de cada uno
+    *                 items:
+    *                   type: object
+    *                   properties: 
+    *                     name:
+    *                       type: string
+    *                       description: Plato pedido
+    *                     quantity:
+    *                       type: number
+    *                       description: Cantidad del plato pedido
+    *           example:
+    *             table: 666
+    *             dishes:
+    *               - name: 'Ensalada de ojos frescos'
+    *                 quantity: 3
+    *               - name: 'Carpaccio de piel muerta'
+    *                 quantity: 1
+    *               - name: 'Hamburguesa de gato zombie'
+    *                 quantity: 2
     *     produces: 
     *       - application/json
     *     responses:
@@ -58,15 +80,27 @@ module.exports = () => {
     *               description: fecha de creación de la comanda en formato UNIX timestamp
     */
     app.post('/menu/order', jsonParser, (req, res) => {
-        const { table } = req.body
+        const { table, dishes = [] } = req.body
         if (!Number.isInteger(table)) {
             res.status(400).send({ error: 'table field is mandatory and must be numeric' })
         } else {
+            const orderId = orderEntity.getElements().length + 1
             const order = orderEntity.createElement()
-                .set('🆔', orderEntity.getElements().length + 1)
+                .set('🆔', orderId)
                 .set('🪑', table)
                 .set('🕓', Date.now())
-            res.status(201).send({ id: order.get('🆔'), table: Number(order.get('🪑')), createdAt: order.get('🕓') })
+            const orderDishes = dishes.map(({ name, quantity }) => {
+                return orderDishesEntity.createElement()
+                    .set('📑', orderId)
+                    .set('🍽', name)
+                    .set('🔢', quantity)
+            }).map(orderElement => {
+                return {
+                    name: orderElement.get('🍽'),
+                    quantity: Number(orderElement.get('🔢'))
+                }
+            })
+            res.status(201).send({ id: order.get('🆔'), table: Number(order.get('🪑')), dishes: orderDishes, createdAt: order.get('🕓') })
         }
     })
 
@@ -93,6 +127,18 @@ module.exports = () => {
     *             table:
     *               type: number
     *               description: número de la mesa que ha pedido la comanda
+    *             dishes:
+    *               type: array
+    *               description: lista de platos de la comanda y cantidad de cada uno
+    *               items:
+    *                 type: object
+    *                 properties: 
+    *                   name:
+    *                     type: string
+    *                     description: Plato pedido
+    *                   quantity:
+    *                     type: number
+    *                     description: Cantidad del plato pedido
     *             createdAt:
     *               type: string
     *               description: fecha de creación de la comanda en formato UNIX timestamp
@@ -108,8 +154,14 @@ module.exports = () => {
     app.get('/menu/order/:orderId', (req, res) => {
         const { orderId } = req.params
         const order = orderEntity.getElementsByField('🆔', orderId)
+        const orderDishes = orderDishesEntity.getElementsByField('📑', orderId).map(orderElement => {
+            return {
+                name: orderElement.get('🍽'),
+                quantity: Number(orderElement.get('🔢'))
+            }
+        })
         if (order.length > 0) {
-            res.status(200).send({ table: Number(order[0].get('🪑')), createdAt: order[0].get('🕓') })
+            res.status(200).send({ table: Number(order[0].get('🪑')), dishes: orderDishes, createdAt: order[0].get('🕓') })
         } else {
             res.status(404).send({ error: `order ${orderId} not found` })
         }
