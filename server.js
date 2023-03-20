@@ -202,6 +202,31 @@ module.exports = (MAX_ORDERS = 5) => {
         res.status(200).send({ deletedOrders: orders.deleteOrders() })
     })
 
+    /**
+    * @openapi
+    * /menu/dishes:
+    *   get:
+    *     summary: Devuelve la información de los platos del menú
+    *     tags: [dishes]
+    *     produces: 
+    *       - application/json
+    *     responses:
+    *       200:
+    *         description: Devuelve una lista de platos
+    *         content: 
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 name:
+    *                   type: string    
+    *                 special:
+    *                   type: boolean
+    */
+    app.get('/menu/dishes', (req, res) => {
+        res.status(200).send(orders.getDishes())
+    })
+
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     return app

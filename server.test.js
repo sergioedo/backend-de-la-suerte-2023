@@ -27,6 +27,12 @@ const deleteOrders = async (app) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
+const getDishes = async (app) =>
+    request(app)
+        .get('/menu/dishes')
+        .expect('Content-Type', /json/)
+        .expect(200)
+
 const testOrder = {
     table: 13,
     dishes: [
@@ -107,4 +113,29 @@ test('Process orders', async () => {
 
     const { body: ordersDelete } = await getOrders(appInstance)
     expect(ordersDelete.length).toBe(0)
+})
+
+test('Get dishes with name and special zombie information', async () => {
+    const appInstance = app()
+    const { body: dishes } = await getDishes(appInstance)
+    dishes.map(dish => {
+        expect(dish.name).toBeDefined()
+        expect(dish.special).toBeDefined()
+    })
+})
+
+test('Order with special zombie dish goes first on the list', async () => {
+    const appInstance = app()
+    const { body: dishes } = await getDishes(appInstance)
+
+    await createOrder(appInstance, testOrder)
+    await createOrder(appInstance, testOrder)
+    const { body: zombieCreatedOrder } = await createOrder(appInstance, {
+        table: 666,
+        dishes: [dishes.filter(dish => dish.special)[0]]
+    })
+
+    const { body: orders } = await getOrders(appInstance)
+    expect(orders.length).toBe(3)
+    expect(orders[0].id).toBe(zombieCreatedOrder.id)
 })
