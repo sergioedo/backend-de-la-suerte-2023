@@ -7,7 +7,7 @@ const orderDishesElementToJSON = orderDishElement => {
     }
 }
 
-module.exports = () => {
+module.exports = (MAX_ORDERS = 5) => {
     const db = emojiBackend.createEmojiDB('👨‍🍳', true)
     const orderEntity = db.createEntity('📑', ['🆔', '🕓', '🪑'])
     const orderDishesEntity = db.createEntity('🗒', ['📑', '🍽', '🔢'])
@@ -25,6 +25,9 @@ module.exports = () => {
 
     return {
         createOrder: (table, dishes) => {
+            if (orderEntity.getElements().length >= MAX_ORDERS) {
+                throw Error(`Maximum number of orders exceeded (max. ${MAX_ORDERS} orders)`)
+            }
             const orderId = orderEntity.getElements().length + 1
             const orderElement = orderEntity.createElement()
                 .set('🆔', orderId)

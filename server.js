@@ -18,9 +18,9 @@ const options = {
 
 const swaggerSpec = swaggerJsdoc(options)
 
-module.exports = () => {
+module.exports = (MAX_ORDERS = 5) => {
     const app = express()
-    const orders = ordersModule()
+    const orders = ordersModule(MAX_ORDERS)
 
     /**
     * @openapi
@@ -87,14 +87,29 @@ module.exports = () => {
     *           application/json:
     *             schema:
     *               $ref: '#/definitions/Order'
+    *       500:
+    *         description: Ha habido algún error al crear la comanda
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties: 
+    *                 error:
+    *                   type: string
+    *                   description: descripción del error
+    *                   example: 'Maximum number of orders exceeded'
     */
     app.post('/menu/order', jsonParser, (req, res) => {
         const { table, dishes = [] } = req.body
         if (!Number.isInteger(table)) {
             res.status(400).send({ error: 'table field is mandatory and must be numeric' })
         } else {
-            const order = orders.createOrder(table, dishes)
-            res.status(201).send(order)
+            try {
+                const order = orders.createOrder(table, dishes)
+                res.status(201).send(order)
+            } catch (error) {
+                res.status(500).send({ error })
+            }
         }
     })
 

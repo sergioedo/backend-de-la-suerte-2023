@@ -1,13 +1,13 @@
 const request = require('supertest')
 const app = require('./server')
 
-const createOrder = async (app, order) =>
+const createOrder = async (app, order, expectedStatus = 201) =>
     request(app)
         .post('/menu/order')
         .send(order)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(201)
+        .expect(expectedStatus)
 
 const getOrder = async (app, id) =>
     request(app)
@@ -78,4 +78,12 @@ test('Query order list with /menu/orders', async () => {
     const { body: orders } = await getOrders(appInstance)
     const ordersIdList = orders.map(order => order.id)
     expect(JSON.stringify(expectedOrdersIdList)).toBe(JSON.stringify(ordersIdList))
+})
+
+test('Exceed maximum number of orders', async () => {
+    const MAX_ORDERS = 2
+    const appInstance = app(MAX_ORDERS)
+    await createOrder(appInstance, testOrder)
+    await createOrder(appInstance, testOrder)
+    await createOrder(appInstance, testOrder, 500) //too many orders request
 })
