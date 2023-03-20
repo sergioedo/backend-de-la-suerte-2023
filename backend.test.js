@@ -59,3 +59,16 @@ test('Delete Elements from entity', () => {
     expect(entity.getElements().length).toBe(0)
     expect(numDeletedElements).toBe(1)
 })
+
+test('Insert Elements at the beginning', () => {
+    const fields = ['🆔']
+    const entity = createEntity('🗂', '📂', fields)
+
+    entity.createElement()
+        .set('🆔', '1️⃣')
+
+    entity.createElement(true)
+        .set('🆔', '2️⃣')
+
+    expect(entity.getElements()[0].get('🆔')).toBe('2️⃣')
+})

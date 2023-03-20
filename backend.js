@@ -73,7 +73,7 @@ const createEmojiDB = (dbId, override = false) => {
             const newEntity = {
                 getID: () => entityId,
                 getFields: () => entityFields,
-                createElement: () => {
+                createElement: (insert = false) => {
                     const fields = {}
                     const element = {
                         set: (field, value) => {
@@ -83,7 +83,12 @@ const createEmojiDB = (dbId, override = false) => {
                         },
                         get: (field) => fields[field]
                     }
-                    elements.push(element)
+                    if (insert) { //insert as first element
+                        elements.reverse().push(element)
+                        elements.reverse()
+                    } else { //append
+                        elements.push(element)
+                    }
                     return element
                 },
                 getElements: () => elements,
