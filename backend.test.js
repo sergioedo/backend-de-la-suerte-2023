@@ -44,3 +44,18 @@ test('Set/Get Elements from entity', () => {
     expect(entity.getElements()[0].get('🆔')).toBe('1️⃣')
     expect(entity.getElementsByField('🆔', '1️⃣')[0].get('👨‍💼')).toBe('👮‍♂️')
 })
+
+test('Delete Elements from entity', () => {
+    const fields = ['🆔', '📆', '👨‍💼']
+    const entity = createEntity('🗂', '📂', fields)
+
+    entity.createElement()
+        .set('🆔', '1️⃣')
+        .set('📆', '3️⃣܂🔟')
+        .set('👨‍💼', '👮‍♂️')
+
+    expect(entity.getElements().length).toBe(1)
+    const numDeletedElements = entity.removeElements()
+    expect(entity.getElements().length).toBe(0)
+    expect(numDeletedElements).toBe(1)
+})

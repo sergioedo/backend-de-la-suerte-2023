@@ -21,6 +21,12 @@ const getOrders = async (app) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
+const deleteOrders = async (app) =>
+    request(app)
+        .del(`/menu/orders`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+
 const testOrder = {
     table: 13,
     dishes: [
@@ -86,4 +92,19 @@ test('Exceed maximum number of orders', async () => {
     await createOrder(appInstance, testOrder)
     await createOrder(appInstance, testOrder)
     await createOrder(appInstance, testOrder, 500) //too many orders request
+})
+
+test('Process orders', async () => {
+    const appInstance = app()
+    await createOrder(appInstance, testOrder)
+    await createOrder(appInstance, testOrder)
+    await createOrder(appInstance, testOrder)
+
+    const { body: orders } = await getOrders(appInstance)
+    expect(orders.length).toBe(3)
+
+    await deleteOrders(appInstance)
+
+    const { body: ordersDelete } = await getOrders(appInstance)
+    expect(ordersDelete.length).toBe(0)
 })

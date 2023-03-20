@@ -179,6 +179,29 @@ module.exports = (MAX_ORDERS = 5) => {
         res.status(200).send(orders.getOrders())
     })
 
+    /**
+    * @openapi
+    * /menu/orders:
+    *   delete:
+    *     summary: Elimina todas las comandas ordenadas
+    *     tags: [orders]
+    *     produces: 
+    *       - application/json
+    *     responses:
+    *       200:
+    *         description: Devuelve el número de comandas eliminadas
+    *         content: 
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 deletedOrders:
+    *                   type: integer    
+    */
+    app.delete('/menu/orders', (req, res) => {
+        res.status(200).send({ deletedOrders: orders.deleteOrders() })
+    })
+
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     return app

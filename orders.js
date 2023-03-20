@@ -50,6 +50,10 @@ module.exports = (MAX_ORDERS = 5) => {
         },
         getOrders: () => {
             return orderEntity.getElements().map(getOrderByElement)
+        },
+        deleteOrders: () => {
+            orderDishesEntity.removeElements()
+            return orderEntity.removeElements()
         }
     }
 }

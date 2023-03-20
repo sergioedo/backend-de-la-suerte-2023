@@ -87,7 +87,13 @@ const createEmojiDB = (dbId, override = false) => {
                     return element
                 },
                 getElements: () => elements,
-                getElementsByField: (field, value) => elements.filter(e => e.get(field) === value)
+                getElementsByField: (field, value) => elements.filter(e => e.get(field) === value),
+                removeElements: () => {
+                    const numDeletedElements = elements.length
+                    elements.length = 0
+                    writeEmojiDB(db)
+                    return numDeletedElements
+                }
             }
             entities[entityId] = newEntity
             writeEmojiDB(db)
@@ -96,7 +102,7 @@ const createEmojiDB = (dbId, override = false) => {
         getEntityById: (entityId) => {
             return entities[entityId]
         },
-        getEntities: () => Object.values(entities)
+        getEntities: () => Object.values(entities),
     }
     writeEmojiDB(db)
     return db
