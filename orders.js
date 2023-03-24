@@ -54,7 +54,7 @@ module.exports = (MAX_ORDERS = 5) => {
             return getOrderByElement(orderElement)
         },
         getOrder: (orderId) => {
-            const order = orderEntity.getElementsByField('🆔', orderId)
+            const order = orderEntity.getElementsByField('🆔', Number(orderId))
             if (order.length === 0) {
                 throw Error(`order ${orderId} not found`)
             }

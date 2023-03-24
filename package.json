@@ -30,6 +30,7 @@
     "supertest": "6.3.3"
   },
   "dependencies": {
+    "emoji-regex": "10.2.1",
     "express": "4.18.2",
     "swagger-jsdoc": "6.2.8",
     "swagger-ui-express": "4.6.2"

@@ -37,15 +37,15 @@ const testOrder = {
     table: 13,
     dishes: [
         {
-            name: 'bocata de calamares',
+            name: '🥗🥝',
             quantity: 2
         },
         {
-            name: 'hamburguesa con queso',
+            name: '🍔',
             quantity: 1
         },
         {
-            name: 'pescado al horno',
+            name: '🍤',
             quantity: 1
         }
     ]

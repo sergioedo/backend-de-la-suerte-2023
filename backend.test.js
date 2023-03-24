@@ -37,12 +37,12 @@ test('Set/Get Elements from entity', () => {
     const entity = createEntity('🗂', '📂', fields)
 
     entity.createElement()
-        .set('🆔', '1️⃣')
+        .set('🆔', 1)
         .set('📆', '3️⃣܂🔟')
         .set('👨‍💼', '👮‍♂️')
 
-    expect(entity.getElements()[0].get('🆔')).toBe('1️⃣')
-    expect(entity.getElementsByField('🆔', '1️⃣')[0].get('👨‍💼')).toBe('👮‍♂️')
+    expect(entity.getElements()[0].get('🆔')).toBe(1)
+    expect(entity.getElementsByField('🆔', 1)[0].get('👨‍💼')).toBe('👮‍♂️')
 })
 
 test('Delete Elements from entity', () => {
@@ -50,7 +50,7 @@ test('Delete Elements from entity', () => {
     const entity = createEntity('🗂', '📂', fields)
 
     entity.createElement()
-        .set('🆔', '1️⃣')
+        .set('🆔', 1)
         .set('📆', '3️⃣܂🔟')
         .set('👨‍💼', '👮‍♂️')
 
@@ -65,10 +65,30 @@ test('Insert Elements at the beginning', () => {
     const entity = createEntity('🗂', '📂', fields)
 
     entity.createElement()
-        .set('🆔', '1️⃣')
+        .set('🆔', 1)
 
     entity.createElement(true)
-        .set('🆔', '2️⃣')
+        .set('🆔', 2)
 
-    expect(entity.getElements()[0].get('🆔')).toBe('2️⃣')
+    expect(entity.getElements()[0].get('🆔')).toBe(2)
+})
+
+test('Recover db created previously', () => {
+    const dbId = '🗂'
+    const entityId = '📂'
+    const entityFields = ['🅰️', '🅱️']
+    const db1 = backend.createEmojiDB(dbId, true)
+    const entity1 = db1.createEntity(entityId, entityFields)
+    const element1 = entity1.createElement()
+        .set('🅰️', 1)
+        .set('🅱️', 2)
+
+    const db2 = backend.createEmojiDB(dbId)
+    expect(db2.getID()).toBe(dbId)
+
+    const entity2 = db2.getEntityById(entityId)
+    expect(entity2.getID()).toBe(entityId)
+
+    const element2 = entity2.getElementsByField('🅰️', 1)[0]
+    expect(element2.get('🅱️')).toBe(element1.get('🅱️'))
 })
