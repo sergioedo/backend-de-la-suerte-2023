@@ -224,11 +224,39 @@ Máximo de puntos en este reto: 20 (de momento, durante la próxima semana habr�
 
 &nbsp;
 
-## Reto 3:
+## Reto 3: Un zombie entra en la cocina
 
-_(Cocinándose a fuego lento hasta el 24 de Marzo)_
+> Hay una opción a ganar 20 puntos sin tocar una línea de código (consulta el grupo de Telegram para saber cómo)
+
+### Primera parte:
+
+Una cocina donde las comandas no se despachan ni es cocina ni es nada. Por muy zombie que sea.
+
+Así que es el momento de añadir esa feature 🥳
+
+Consideraremos una pila FIFO: First In, First Out
+
+Para el orden las mismas condiciones vistas en el reto 2:
+
+- Ordenamos por fecha gracias al campo `createdAt`
+- Si entra un "ESPECIAL ZOMBIE" se cuela siempre la primera
+
+Las comandas desaparecen de esa lista en orden y se les puede añadir un campo nuevo `dispatchedAt` para almacenar el momento en el que desaparecen de la comanda.
+
+Tu misión que crear un comando, ruta o lo que sea para que se produzca ese "despacho" de la comanda 1 por 1 y se almacene el cambio en tu #BackendDeLaSuerte.
+
+### Segunda parte:
+
+Se revelará el 25 de Marzo ;)
 
 &nbsp;
+
+### Reparto de puntos
+
+- 20 puntos si entregas el resultado antes del día del directo
+- xxx
+
+Máximo de puntos en este reto: 20, de momento
 
 ---
 
