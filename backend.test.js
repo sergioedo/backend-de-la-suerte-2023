@@ -1,6 +1,6 @@
 const backend = require('./backend')
 
-const createDB = (dbId) => backend.createEmojiDB(dbId, true)
+const createDB = (dbId) => backend.createEmojiDB(dbId)
 const createEntity = (dbId, entityId, entityFields) => {
     const db = createDB(dbId)
     return db.createEntity(entityId, entityFields)
@@ -77,13 +77,13 @@ test('Recover db created previously', () => {
     const dbId = '🗂'
     const entityId = '📂'
     const entityFields = ['🅰️', '🅱️']
-    const db1 = backend.createEmojiDB(dbId, true)
+    const db1 = backend.createEmojiDB(dbId)
     const entity1 = db1.createEntity(entityId, entityFields)
     const element1 = entity1.createElement()
         .set('🅰️', 1)
         .set('🅱️', 2)
 
-    const db2 = backend.createEmojiDB(dbId)
+    const db2 = backend.readEmojiDB(dbId)
     expect(db2.getID()).toBe(dbId)
 
     const entity2 = db2.getEntityById(entityId)

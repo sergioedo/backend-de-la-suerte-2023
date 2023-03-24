@@ -49,7 +49,7 @@ const readEmojiDB = (dbId) => {
     const fileContent = fs.readFileSync(fileName, 'utf8')
     const fileLines = fileContent.split(EOL).slice(1).filter(line => line.length > 0)
 
-    const db = createEmojiDB(dbId, true)
+    const db = createEmojiDB(dbId)
 
     let currentEntity
     let entityCount = 0
@@ -74,12 +74,7 @@ const readEmojiDB = (dbId) => {
     return db
 }
 
-const createEmojiDB = (dbId, override = false) => {
-    if (!override) {
-        const fileDB = readEmojiDB(dbId)
-        if (fileDB) return fileDB
-    }
-
+const createEmojiDB = (dbId) => {
     const entities = {}
     const db = {
         getID: () => dbId,
@@ -129,5 +124,6 @@ const createEmojiDB = (dbId, override = false) => {
 }
 
 module.exports = {
-    createEmojiDB
+    createEmojiDB,
+    readEmojiDB
 }

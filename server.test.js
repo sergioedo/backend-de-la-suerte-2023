@@ -51,6 +51,11 @@ const testOrder = {
     ]
 }
 
+beforeEach(async () => {
+    // Clears the database before each test
+    await deleteOrders(app())
+})
+
 test('Create an order with POST to /menu/order', async () => {
     const testTimestamp = new Date().valueOf()
     const response = await createOrder(app(), testOrder)
@@ -63,14 +68,12 @@ test('Create an order with POST to /menu/order', async () => {
 })
 
 test('Query order and check fields', async () => {
-    const appInstance = app()
-    //TODO: test with different instances (test persistence)
-    const createResponse = await createOrder(appInstance, testOrder)
+    const createResponse = await createOrder(app(), testOrder)
     expect(createResponse.body.id).toBeDefined()
     expect(createResponse.body.createdAt).toBeDefined()
 
     const { id, createdAt } = createResponse.body
-    const response = await getOrder(appInstance, id)
+    const response = await getOrder(app(), id)
     expect(response.body.table).toBe(testOrder.table)
     expect(response.body.dishes.length).toBe(testOrder.dishes.length)
     expect(response.body.createdAt).toBe(createdAt)

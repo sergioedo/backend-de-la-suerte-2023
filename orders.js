@@ -10,17 +10,23 @@ const orderDishesElementToJSON = orderDishElement => {
 const dishElementToJSON = dishElement => ({ name: dishElement.get('🍽'), special: dishElement.get('🧟') === '✅' })
 
 const menuDishes = [
-    { '🍽': '🥗', '🧟': '❌' },
+    { '🍽': '🥗🥑', '🧟': '❌' },
     { '🍽': '🥩', '🧟': '✅' },
     { '🍽': '🍌', '🧟': '❌' }
 ]
 
 module.exports = (MAX_ORDERS = 5) => {
-    const db = emojiBackend.createEmojiDB('👨‍🍳', true)
-    const orderEntity = db.createEntity('📑', ['🆔', '🕓', '🪑'])
-    const orderDishesEntity = db.createEntity('🗒', ['📑', '🍽', '🔢'])
-    const dishesEntity = db.createEntity('🍴', ['🍽', '🧟'])
-    menuDishes.map(dish => dishesEntity.createElement().set('🍽', dish['🍽']).set('🧟', dish['🧟']))
+    let db = emojiBackend.readEmojiDB('👨‍🍳')
+    if (db === null) { //Init DB schema, if not exists
+        db = emojiBackend.createEmojiDB('👨‍🍳')
+        db.createEntity('📑', ['🆔', '🕓', '🪑']) // orderEntity
+        db.createEntity('🗒', ['📑', '🍽', '🔢']) // orderDishesEntity
+        const dishesEntity = db.createEntity('🍴', ['🍽', '🧟'])
+        menuDishes.map(dish => dishesEntity.createElement().set('🍽', dish['🍽']).set('🧟', dish['🧟']))
+    }
+    const orderEntity = db.getEntityById('📑')
+    const orderDishesEntity = db.getEntityById('🗒')
+    const dishesEntity = db.getEntityById('🍴')
 
     const getOrderByElement = (orderElement) => {
         const orderId = orderElement.get('🆔')
