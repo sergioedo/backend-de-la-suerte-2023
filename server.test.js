@@ -135,7 +135,10 @@ test('Order with special zombie dish goes first on the list', async () => {
     await createOrder(appInstance, testOrder)
     const { body: zombieCreatedOrder } = await createOrder(appInstance, {
         table: 666,
-        dishes: [dishes.filter(dish => dish.special)[0]]
+        dishes: [{
+            name: dishes.filter(dish => dish.special)[0].name,
+            quantity: 3
+        }]
     })
 
     const { body: orders } = await getOrders(appInstance)
