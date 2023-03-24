@@ -45,11 +45,11 @@ module.exports = (MAX_ORDERS = 5) => {
     *               type: number
     *               description: Cantidad del plato pedido
     *         example:
-    *           - name: 'Ensalada de ojos frescos'
+    *           - name: '🥗🥝'
     *             quantity: 3
-    *           - name: 'Carpaccio de piel muerta'
+    *           - name: '🥩'
     *             quantity: 1
-    *           - name: 'Hamburguesa de gato zombie'
+    *           - name: '🍔'
     *             quantity: 2
     *   Order:
     *     allOf:
