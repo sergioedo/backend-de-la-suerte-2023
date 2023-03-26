@@ -33,6 +33,20 @@ const getDishes = async (app) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
+const dispatchOrder = async (app) =>
+    request(app)
+        .post('/menu/orders/dispatch')
+        .send()
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+
+const getDispatchedOrders = async (app) =>
+    request(app)
+        .get(`/menu/orders/dispatched`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+
 const testOrder = {
     table: 13,
     dishes: [
@@ -144,4 +158,27 @@ test('Order with special zombie dish goes first on the list', async () => {
     const { body: orders } = await getOrders(appInstance)
     expect(orders.length).toBe(3)
     expect(orders[0].id).toBe(zombieCreatedOrder.id)
+})
+
+const getOrderId = (order => order.id)
+
+test('Dispatch next order', async () => {
+    const appInstance = app()
+    const { body: order } = createOrder(appInstance, testOrder)
+
+    const { body: orders } = await getOrders(appInstance)
+    expect(orders[0].id).toBe(order.id)
+    const orderId = order.id
+
+    const { body: dispatchedOrder } = await dispatchOrder(appInstance)
+    const { dispatchedAt } = dispatchedOrder
+    expect(dispatchedAt).toBeDefined()
+
+    const { body: ordersAfterDispatch } = await getOrders(appInstance)
+    expect(ordersAfterDispatch.map(getOrderId)).not.toContain(orderId)
+
+    const { body: dispatchedOrders } = await getDispatchedOrders(appInstance)
+    expect(dispatchedOrders.map(getOrderId)).toContain(orderId)
+    const { dispatchedAtAfter } = dispatchedOrders.filter(order => order.id === orderId)[0]
+    expect(dispatchedAt).toBe(dispatchedAtAfter)
 })
