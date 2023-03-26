@@ -45,11 +45,11 @@ module.exports = (MAX_ORDERS = 5) => {
     *               type: number
     *               description: Cantidad del plato pedido
     *         example:
-    *           - name: '🥗🥝'
+    *           - name: '🥗🍤🥑'
     *             quantity: 3
-    *           - name: '🥩'
+    *           - name: '🥩🍳🍞'
     *             quantity: 1
-    *           - name: '🍔'
+    *           - name: '🥧🍫🍨🍓'
     *             quantity: 2
     *   Order:
     *     allOf:
@@ -213,7 +213,7 @@ module.exports = (MAX_ORDERS = 5) => {
     /**
     * @openapi
     * /menu/orders/dispatch:
-    *   post:
+    *   patch:
     *     summary: Procesa la siguiente comanda del restaurante
     *     tags: [orders]
     *     produces: 
