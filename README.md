@@ -234,7 +234,7 @@ Una cocina donde las comandas no se despachan ni es cocina ni es nada. Por muy z
 
 Así que es el momento de añadir esa feature 🥳
 
-Consideraremos una pila FIFO: First In, First Out
+Consideraremos una cola FIFO: First In, First Out
 
 Para el orden las mismas condiciones vistas en el reto 2:
 
@@ -247,16 +247,43 @@ Tu misión que crear un comando, ruta o lo que sea para que se produzca ese "des
 
 ### Segunda parte:
 
-Se revelará el 25 de Marzo ;)
+¡¡¡Un zombie se ha colado en tu cocina!!!
+
+Vamos a simular que un zombie se cuela en tu sistema de comandas y altera tus datos. Va a intentar la fecha en la que la comanda ha sido creada en tu sistema.
+
+Tendrás que crear un método usando tu backend que permita protegerse de estos bichos comecerebros...
+
+&nbsp;
+
+**¿Cómo lo haremos?**
+
+Como no me puedo colar en tu código, simularemos al zombie haciendo una llamada a una API.
+
+Cada vez que hayas creado una comanda tendrás que llamar a este endpoint:
+
+```
+https://zombie-entrando-cocina.vercel.app/api/zombie/1
+```
+
+Hay dos respuestas posibles:
+
+1- El zombie pasa de largo
+
+2- El zombie te escupe en la cara
+
+En este segundo caso verás un mensaje que contiene una fecha aleatoria de Marzo de 2023. Tendrás que capturarla y asigánrsela a la comanda en el campo `createdAt`. Al Zombie solo le llega el cerebro para cambiarte el día, no la hora.
+
+El requisito de esta prueba es lograr recuperar la fecha `createdAt` original si ha sido alterada por el Zombie.
 
 &nbsp;
 
 ### Reparto de puntos
 
 - 20 puntos si entregas el resultado antes del día del directo
-- xxx
+- 20 puntos más si realizas la segunda parte de este reto 3
+- 20 punto más si añades 3 tests que comprueben el funcionamiento del reto 3 (de la parte 1 o la 2)
 
-Máximo de puntos en este reto: 20, de momento
+Máximo de puntos en este reto: 60
 
 ---
 
