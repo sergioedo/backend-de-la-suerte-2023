@@ -10,9 +10,17 @@ const orderDishesElementToJSON = orderDishElement => {
 const dishElementToJSON = dishElement => ({ name: dishElement.get('🍽'), special: dishElement.get('🧟') === '✅' })
 
 const menuDishes = [
-    { '🍽': '🥗🥑', '🧟': '❌' },
-    { '🍽': '🥩', '🧟': '✅' },
-    { '🍽': '🍌', '🧟': '❌' }
+    { '🍽': '🥗🍤🥑', '🧟': '❌' }, // Ensalada de langosta con aguacate y vinagreta de cítricos
+    { '🍽': '🍜🧄🧀🍞', '🧟': '❌' }, // Sopa de cebolla gratinada con queso gruyere y tostadas de pan
+    { '🍽': '🥘🍤🍲', '🧟': '❌' }, // Paella de mariscos con arroz caldoso y alioli de azafrán
+    { '🍽': '🥞🍆🥫🧀', '🧟': '❌' }, // Lasaña de berenjena con salsa boloñesa y queso ricotta
+    { '🍽': '💪🔥🥔🩸', '🧟': '✅' }, // Brazo humano a la brasa con puré de patatas sangrado
+    { '🍽': '🥩🍳🍞', '🧟': '❌' }, // Steak tartare con huevo de codorniz y tostadas de pan casero
+    { '🍽': '🐟🔥🥗🍠🍊', '🧟': '❌' }, // Salmón a la parrilla con ensalada de remolacha y vinagreta de naranja
+    { '🍽': '🥩🍷👁', '🧟': '✅' }, // Filete mignon crudo con salsa de vino tinto y puré de ojos trufado
+    { '🍽': '🥓🩸🧠🏏💅', '🧟': '✅' }, // Intestinos asados con plasma de sangre acompañados con puré de seso bateado con "Lucille" y crujiente de uñas rotas
+    { '🍽': '🥧🍫🍨🍓', '🧟': '❌' }, // Soufflé de chocolate con helado de vainilla y salsa de frutos rojos
+    { '🍽': '🥮🦵🩸👂', '🧟': '✅' } // Pastel con masa de pierna humana, relleno de orejas sangrientas
 ]
 
 module.exports = (MAX_ORDERS = 5) => {
