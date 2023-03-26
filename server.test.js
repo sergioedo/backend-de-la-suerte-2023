@@ -27,6 +27,12 @@ const deleteOrders = async (app) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
+const deleteDispatchedOrders = async (app) =>
+    request(app)
+        .del(`/menu/orders/dispatched`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+
 const getDishes = async (app) =>
     request(app)
         .get('/menu/dishes')
@@ -35,7 +41,7 @@ const getDishes = async (app) =>
 
 const dispatchOrder = async (app) =>
     request(app)
-        .post('/menu/orders/dispatch')
+        .patch('/menu/orders/dispatch')
         .send()
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
@@ -68,6 +74,7 @@ const testOrder = {
 beforeEach(async () => {
     // Clears the database before each test
     await deleteOrders(app())
+    await deleteDispatchedOrders(app())
 })
 
 test('Create an order with POST to /menu/order', async () => {
@@ -164,11 +171,11 @@ const getOrderId = (order => order.id)
 
 test('Dispatch next order', async () => {
     const appInstance = app()
-    const { body: order } = createOrder(appInstance, testOrder)
+    const { body: order } = await createOrder(appInstance, testOrder)
+    const orderId = order.id
 
     const { body: orders } = await getOrders(appInstance)
-    expect(orders[0].id).toBe(order.id)
-    const orderId = order.id
+    expect(orders[0].id).toBe(orderId)
 
     const { body: dispatchedOrder } = await dispatchOrder(appInstance)
     const { dispatchedAt } = dispatchedOrder
@@ -179,6 +186,6 @@ test('Dispatch next order', async () => {
 
     const { body: dispatchedOrders } = await getDispatchedOrders(appInstance)
     expect(dispatchedOrders.map(getOrderId)).toContain(orderId)
-    const { dispatchedAtAfter } = dispatchedOrders.filter(order => order.id === orderId)[0]
+    const { dispatchedAt: dispatchedAtAfter } = dispatchedOrders.filter(order => order.id === orderId)[0]
     expect(dispatchedAt).toBe(dispatchedAtAfter)
 })

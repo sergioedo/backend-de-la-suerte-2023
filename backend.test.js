@@ -73,6 +73,17 @@ test('Insert Elements at the beginning', () => {
     expect(entity.getElements()[0].get('🆔')).toBe(2)
 })
 
+test('Delete first element', () => {
+    const fields = ['🆔']
+    const entity = createEntity('🗂', '📂', fields)
+
+    entity.createElement().set('🆔', 1)
+    entity.createElement().set('🆔', 2)
+    entity.removeFirstElement()
+
+    expect(entity.getElements()[0].get('🆔')).toBe(2)
+})
+
 test('Recover db created previously', () => {
     const dbId = '🗂'
     const entityId = '📂'

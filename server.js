@@ -64,6 +64,15 @@ module.exports = (MAX_ORDERS = 5) => {
     *             type: string
     *             description: fecha de creación de la comanda en formato UNIX timestamp
     *             example: "1679265217763"
+    *   DispatchedOrder:
+    *     allOf:
+    *       - $ref: '#/definitions/Order'
+    *       - type: object
+    *         properties: 
+    *           createdAt:
+    *             type: string
+    *             description: fecha de procesado de la comanda en formato UNIX timestamp
+    *             example: "1679265217763"
     */
 
     /**
@@ -181,6 +190,64 @@ module.exports = (MAX_ORDERS = 5) => {
 
     /**
     * @openapi
+    * /menu/orders/dispatched:
+    *   get:
+    *     summary: Recupera la información de todas las comandas procesadas
+    *     tags: [orders]
+    *     produces: 
+    *       - application/json
+    *     responses:
+    *       200:
+    *         description: Devuelve una lista con la información de todas las comandas procesadas
+    *         content: 
+    *           application/json:
+    *             schema:
+    *               type: array
+    *               items:
+    *                   $ref: '#/definitions/DispatchedOrder'        
+    */
+    app.get('/menu/orders/dispatched', (req, res) => {
+        res.status(200).send(orders.getDispatchedOrders())
+    })
+
+    /**
+    * @openapi
+    * /menu/orders/dispatch:
+    *   post:
+    *     summary: Procesa la siguiente comanda del restaurante
+    *     tags: [orders]
+    *     produces: 
+    *       - application/json
+    *     responses:
+    *       200:
+    *         description: Devuelve la información de la comanda procesada
+    *         content:
+    *           application/json:
+    *             schema:
+    *               $ref: '#/definitions/Order'
+    *       500:
+    *         description: Ha habido algún error al procesar la comanda
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties: 
+    *                 error:
+    *                   type: string
+    *                   description: descripción del error
+    *                   example: 'Error processing order <orderId>'
+    */
+    app.patch('/menu/orders/dispatch', jsonParser, (req, res) => {
+        try {
+            const dispatchedOrder = orders.dispatchOrder()
+            res.status(200).send(dispatchedOrder)
+        } catch (error) {
+            res.status(500).send({ error })
+        }
+    })
+
+    /**
+    * @openapi
     * /menu/orders:
     *   delete:
     *     summary: Elimina todas las comandas ordenadas
@@ -200,6 +267,29 @@ module.exports = (MAX_ORDERS = 5) => {
     */
     app.delete('/menu/orders', (req, res) => {
         res.status(200).send({ deletedOrders: orders.deleteOrders() })
+    })
+
+    /**
+    * @openapi
+    * /menu/orders/dispatched:
+    *   delete:
+    *     summary: Elimina todas las comandas procesadas
+    *     tags: [orders]
+    *     produces: 
+    *       - application/json
+    *     responses:
+    *       200:
+    *         description: Devuelve el número de comandas eliminadas
+    *         content: 
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 deletedOrders:
+    *                   type: integer    
+    */
+    app.delete('/menu/orders/dispatched', (req, res) => {
+        res.status(200).send({ deletedOrders: orders.deleteDispatchedOrders() })
     })
 
     /**

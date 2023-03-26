@@ -79,7 +79,7 @@ const createEmojiDB = (dbId) => {
     const db = {
         getID: () => dbId,
         createEntity: (entityId, entityFields = []) => {
-            const elements = [] //entities[entityId] ? [...entities[entityId].getElements()] : []
+            let elements = [] //entities[entityId] ? [...entities[entityId].getElements()] : []
             const newEntity = {
                 getID: () => entityId,
                 getFields: () => entityFields,
@@ -103,6 +103,11 @@ const createEmojiDB = (dbId) => {
                 },
                 getElements: () => elements,
                 getElementsByField: (field, value) => elements.filter(e => e.get(field) === value),
+                removeFirstElement: () => {
+                    const deletedElement = elements[0]
+                    elements = elements.slice(1)
+                    return deletedElement
+                },
                 removeElements: () => {
                     const numDeletedElements = elements.length
                     elements.length = 0

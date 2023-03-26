@@ -28,11 +28,13 @@ module.exports = (MAX_ORDERS = 5) => {
     if (db === null) { //Init DB schema, if not exists
         db = emojiBackend.createEmojiDB('👨‍🍳')
         db.createEntity('📑', ['🆔', '🕓', '🪑']) // orderEntity
+        db.createEntity('📜', ['🆔', '🕓', '🛎', '🪑']) // disptachedOrderEntity
         db.createEntity('🗒', ['📑', '🍽', '🔢']) // orderDishesEntity
         const dishesEntity = db.createEntity('🍴', ['🍽', '🧟'])
         menuDishes.map(dish => dishesEntity.createElement().set('🍽', dish['🍽']).set('🧟', dish['🧟']))
     }
     const orderEntity = db.getEntityById('📑')
+    const dispatchedOrderEntity = db.getEntityById('📜')
     const orderDishesEntity = db.getEntityById('🗒')
     const dishesEntity = db.getEntityById('🍴')
 
@@ -44,6 +46,13 @@ module.exports = (MAX_ORDERS = 5) => {
             table: Number(orderElement.get('🪑')),
             dishes: orderDishes,
             createdAt: orderElement.get('🕓')
+        }
+    }
+
+    const getDispatchedOrderByElement = (orderElement) => {
+        return {
+            ...getOrderByElement(orderElement),
+            dispatchedAt: orderElement.get('🛎')
         }
     }
 
@@ -77,9 +86,24 @@ module.exports = (MAX_ORDERS = 5) => {
         getOrders: () => {
             return orderEntity.getElements().map(getOrderByElement)
         },
+        getDispatchedOrders: () => {
+            return dispatchedOrderEntity.getElements().map(getDispatchedOrderByElement)
+        },
+        dispatchOrder: () => {
+            const deletedElement = orderEntity.removeFirstElement()
+            const dispatchedOrder = dispatchedOrderEntity.createElement()
+                .set('🆔', deletedElement.get('🆔'))
+                .set('🪑', deletedElement.get('🪑'))
+                .set('🕓', deletedElement.get('🕓'))
+                .set('🛎', Date.now())
+            return getDispatchedOrderByElement(dispatchedOrder)
+        },
         deleteOrders: () => {
             orderDishesEntity.removeElements()
             return orderEntity.removeElements()
+        },
+        deleteDispatchedOrders: () => {
+            return dispatchedOrderEntity.removeElements()
         },
         getDishes: () => {
             return dishesEntity.getElements().map(dishElementToJSON)
