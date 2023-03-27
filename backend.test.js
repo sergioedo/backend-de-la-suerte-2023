@@ -1,9 +1,9 @@
 const backend = require('./backend')
 
 const createDB = (dbId) => backend.createEmojiDB(dbId)
-const createEntity = (dbId, entityId, entityFields) => {
+const createEntity = (dbId, entityId, entityFields, readOnlyFields = []) => {
     const db = createDB(dbId)
-    return db.createEntity(entityId, entityFields)
+    return db.createEntity(entityId, entityFields, readOnlyFields)
 }
 
 test('Create Database', () => {
@@ -102,4 +102,19 @@ test('Recover db created previously', () => {
 
     const element2 = entity2.getElementsByField('🅰️', 1)[0]
     expect(element2.get('🅱️')).toBe(element1.get('🅱️'))
+})
+
+test('Set and check read-only fields', () => {
+    const fields = ['🆔', '📆', '👨‍💼']
+    const readOnlyFields = ['🆔', '📆']
+    const entity = createEntity('🗂', '📂', fields, readOnlyFields)
+
+    const element = entity.createElement()
+        .set('🆔', 1)
+        .set('📆', 123456789)
+        .set('👨‍💼', '👮‍♂️')
+
+    expect(() => {
+        element.set('📆', 987654321)
+    }).toThrow('Field 📆 is readonly')
 })

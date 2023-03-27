@@ -26,7 +26,7 @@ const writeEmojiDB = (db) => {
         // Entities
         db.getEntities().map(entity => {
             const elements = entity.getElements()
-            fileContent += entity.getID() + entity.getFields().join('') + '#️⃣' + number2Emoji(elements.length) + EOL
+            fileContent += entity.getID() + entity.getFields().join('') + '#️⃣' + entity.getReadOnlyFields().join('') + '#️⃣' + number2Emoji(elements.length) + EOL
             const fields = entity.getFields()
             elements.map(element => {
                 fields.map(field => {
@@ -66,8 +66,9 @@ const readEmojiDB = (dbId) => {
         } else { // new entity
             const entityId = emojis[0]
             const entityFields = emojis.slice(1, emojis.findIndex(value => value === '#️⃣'))
-            entityCount = emoji2Number(line.split('#️⃣')[1])
-            currentEntity = db.createEntity(entityId, entityFields)
+            const entityReadOnlyFields = line.split('#️⃣')[1] || []
+            entityCount = emoji2Number(line.split('#️⃣')[2])
+            currentEntity = db.createEntity(entityId, entityFields, entityReadOnlyFields)
         }
     })
 
@@ -78,15 +79,19 @@ const createEmojiDB = (dbId) => {
     const entities = {}
     const db = {
         getID: () => dbId,
-        createEntity: (entityId, entityFields = []) => {
+        createEntity: (entityId, entityFields = [], readOnlyFields = []) => {
             let elements = [] //entities[entityId] ? [...entities[entityId].getElements()] : []
             const newEntity = {
                 getID: () => entityId,
                 getFields: () => entityFields,
+                getReadOnlyFields: () => readOnlyFields,
                 createElement: (insert = false) => {
                     const fields = {}
                     const element = {
                         set: (field, value) => {
+                            if (readOnlyFields.includes(field) && fields[field] !== undefined) {
+                                throw new Error(`Field ${field} is readonly`)
+                            }
                             fields[field] = value2Emoji(value)
                             writeEmojiDB(db)
                             return element
