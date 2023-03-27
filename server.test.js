@@ -1,4 +1,5 @@
 const request = require('supertest')
+const fetch = require('node-fetch')
 const app = require('./server')
 
 const createOrder = async (app, order, expectedStatus = 201) =>
@@ -209,4 +210,35 @@ test('Create an order with zombie troll action', async () => {
     const { body: orderAfterTroll } = await getOrder(appInstance, orderId)
 
     expect(orderAfterTroll.createdAt).toBe(modifiedOrder.createdAt)
+})
+
+const checkTrollZombie = async () => {
+    const response = await fetch('https://zombie-entrando-cocina.vercel.app/api/zombie/1')
+    return checkTrollZombieResponse(response)
+}
+
+const checkTrollZombieResponse = (response) => {
+    if (response.status) return { troll: false }
+    const key = Object.keys(response)[0]
+    const encodedDate = response[key]
+    const [year, month, day] = encodedDate.replace(/\$/g, '').replace('ZOMBIEEEEEEE____', '').split('-')
+    return {
+        troll: true,
+        trollDate: new Date(year, month - 1, day).getTime()
+    }
+}
+
+test('Check Zombie API possible responses', () => {
+    const zombieNeutralResponse = {
+        "status": "Zombie pasa de largo"
+    }
+    const { troll } = checkTrollZombieResponse(zombieNeutralResponse)
+    expect(troll).toBe(false)
+
+    const zombieTrollResponse = {
+        "sw45sdf": "ZOMBIEEEEEEE____$20$$$$$$$$$23$$$$$$$$$-0$$$$$$$$$3-$$$$$$$$$27$$$$$$$$$$$$$$$$$$$$$$$$"
+    }
+    const { troll: troll2, trollDate } = checkTrollZombieResponse(zombieTrollResponse)
+    expect(troll2).toBe(true)
+    expect(trollDate).toBe(new Date(2023, 2, 27).getTime())
 })
