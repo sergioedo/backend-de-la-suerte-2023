@@ -249,7 +249,7 @@ Tu misión que crear un comando, ruta o lo que sea para que se produzca ese "des
 
 ¡¡¡Un zombie se ha colado en tu cocina!!!
 
-Vamos a simular que un zombie se cuela en tu sistema de comandas y altera tus datos. Va a intentar la fecha en la que la comanda ha sido creada en tu sistema.
+Vamos a simular que un zombie se cuela en tu sistema de comandas y altera tus datos. Va a intentar modificar la fecha en la que la comanda ha sido creada en tu sistema.
 
 Tendrás que crear un método usando tu backend que permita protegerse de estos bichos comecerebros...
 
@@ -273,7 +273,9 @@ Hay dos respuestas posibles:
 
 En este segundo caso verás un mensaje que contiene una fecha aleatoria de Marzo de 2023. Tendrás que capturarla y asigánrsela a la comanda en el campo `createdAt`. Al Zombie solo le llega el cerebro para cambiarte el día, no la hora.
 
-El requisito de esta prueba es lograr recuperar la fecha `createdAt` original si ha sido alterada por el Zombie.
+El Zombie Trol "ataca" justo después de que almacenes la comanda.
+
+El reto para ti de esta prueba es lograr recuperar la fecha `createdAt` original si ha sido alterada por el Zombie Trol.
 
 &nbsp;
 

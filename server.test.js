@@ -53,6 +53,13 @@ const getDispatchedOrders = async (app) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
+const modifyOrder = async (app, orderId, order) =>
+    request(app)
+        .put(`/menu/order/${orderId}`)
+        .send(order)
+        .expect('Content-Type', /json/)
+        .expect(200)
+
 const testOrder = {
     table: 13,
     dishes: [
@@ -188,4 +195,18 @@ test('Dispatch next order', async () => {
     expect(dispatchedOrders.map(getOrderId)).toContain(orderId)
     const { dispatchedAt: dispatchedAtAfter } = dispatchedOrders.filter(order => order.id === orderId)[0]
     expect(dispatchedAt).toBe(dispatchedAtAfter)
+})
+
+test('Create an order with zombie troll action', async () => {
+    const appInstance = app()
+    const { body: order } = await createOrder(appInstance, testOrder)
+    const { id: orderId, createdAt } = order
+
+    const trollDate = new Date(createdAt + (24 * 60 * 60 * 1000)).getTime()
+    const { body: modifiedOrder } = await modifyOrder(appInstance, orderId, { createdAt: trollDate })
+    expect(trollDate).toBe(modifiedOrder.createdAt)
+
+    const { body: orderAfterTroll } = await getOrder(appInstance, orderId)
+
+    expect(orderAfterTroll.createdAt).toBe(modifiedOrder.createdAt)
 })

@@ -76,6 +76,20 @@ module.exports = (MAX_ORDERS = 5) => {
             })
             return getOrderByElement(orderElement)
         },
+        modifyOrder: (orderId, table, createdAt) => {
+            const order = orderEntity.getElementsByField('🆔', Number(orderId))
+            if (order.length === 0) {
+                throw Error(`order ${orderId} not found`)
+            }
+            const orderElement = order[0]
+            if (table) {
+                orderElement.set('🪑', table)
+            }
+            if (createdAt) {
+                orderElement.set('🕓', Number(createdAt))
+            }
+            return getOrderByElement(orderElement)
+        },
         getOrder: (orderId) => {
             const order = orderEntity.getElementsByField('🆔', Number(orderId))
             if (order.length === 0) {

@@ -168,6 +168,57 @@ module.exports = (MAX_ORDERS = 5) => {
 
     /**
     * @openapi
+    * /menu/order/{orderId}:
+    *   put:
+    *     summary: Edita la información de una comanda
+    *     tags: [orders]
+    *     produces: 
+    *       - application/json
+    *     parameters:
+    *       - in: path
+    *         name: orderId
+    *         type: string
+    *         required: true
+    *         description: Identificador de la comanda
+    *     requestBody:
+    *       description: Información sobre la comanda a crear
+    *       content: 
+    *         application/json:
+    *           schema:
+    *             $ref: '#/definitions/OrderRequest'
+    *     responses:
+    *       200:
+    *         description: Devuelve la información de la comanda modificada
+    *         content: 
+    *           application/json:
+    *             schema:
+    *               $ref: '#/definitions/Order'
+    *       404:
+    *         description: La comanda no existe
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties: 
+    *                 error:
+    *                   type: string
+    *                   description: descripción del error
+    *                   example: 'Order <12345> not found'
+    *                   
+    */
+    app.put('/menu/order/:orderId', jsonParser, (req, res) => {
+        const { orderId } = req.params
+        const { table, createdAt } = req.body
+        try {
+            const order = orders.modifyOrder(orderId, table, createdAt)
+            res.status(200).send(order)
+        } catch (error) {
+            res.status(404).send({ error })
+        }
+    })
+
+    /**
+    * @openapi
     * /menu/orders:
     *   get:
     *     summary: Recupera la información de todas las comandas ordenadas
