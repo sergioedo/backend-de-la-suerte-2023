@@ -248,7 +248,6 @@ test('Create an order with zombie troll action from API', async () => {
     const { id: orderId, createdAt } = order
 
     const { troll, trollDate } = await checkTrollZombie()
-    console.log({ troll, trollDate })
     if (troll) {
         await modifyOrder(appInstance, orderId, { createdAt: trollDate }, 500)
     }

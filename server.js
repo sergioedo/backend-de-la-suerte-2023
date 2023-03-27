@@ -213,7 +213,11 @@ module.exports = (MAX_ORDERS = 5) => {
             const order = orders.modifyOrder(orderId, table, createdAt)
             res.status(200).send(order)
         } catch (error) {
-            res.status(404).send({ error })
+            if (error) {
+                res.status(500).send({ error })
+            } else {
+                res.status(404).send({ error })
+            }
         }
     })
 

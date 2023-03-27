@@ -27,7 +27,7 @@ module.exports = (MAX_ORDERS = 5) => {
     let db = emojiBackend.readEmojiDB('👨‍🍳')
     if (db === null) { //Init DB schema, if not exists
         db = emojiBackend.createEmojiDB('👨‍🍳')
-        db.createEntity('📑', ['🆔', '🕓', '🪑']) // orderEntity
+        db.createEntity('📑', ['🆔', '🕓', '🪑'], ['🆔', '🕓']) // orderEntity
         db.createEntity('📜', ['🆔', '🕓', '🛎', '🪑']) // disptachedOrderEntity
         db.createEntity('🗒', ['📑', '🍽', '🔢']) // orderDishesEntity
         const dishesEntity = db.createEntity('🍴', ['🍽', '🧟'])
