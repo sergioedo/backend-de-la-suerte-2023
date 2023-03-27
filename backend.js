@@ -84,7 +84,7 @@ const createEmojiDB = (dbId) => {
             const newEntity = {
                 getID: () => entityId,
                 getFields: () => entityFields,
-                getReadOnlyFields: () => readOnlyFields,
+                getReadOnlyFields: () => [...readOnlyFields],
                 createElement: (insert = false) => {
                     const fields = {}
                     const element = {
