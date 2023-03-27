@@ -54,12 +54,12 @@ const getDispatchedOrders = async (app) =>
         .expect('Content-Type', /json/)
         .expect(200)
 
-const modifyOrder = async (app, orderId, order) =>
+const modifyOrder = async (app, orderId, order, expectedStatus = 200) =>
     request(app)
         .put(`/menu/order/${orderId}`)
         .send(order)
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(expectedStatus)
 
 const testOrder = {
     table: 13,
@@ -204,17 +204,16 @@ test('Create an order with zombie troll action', async () => {
     const { id: orderId, createdAt } = order
 
     const trollDate = new Date(createdAt + (24 * 60 * 60 * 1000)).getTime()
-    const { body: modifiedOrder } = await modifyOrder(appInstance, orderId, { createdAt: trollDate })
-    expect(trollDate).toBe(modifiedOrder.createdAt)
+    await modifyOrder(appInstance, orderId, { createdAt: trollDate }, 500)
 
     const { body: orderAfterTroll } = await getOrder(appInstance, orderId)
-
-    expect(orderAfterTroll.createdAt).toBe(modifiedOrder.createdAt)
+    expect(orderAfterTroll.createdAt).toBe(createdAt)
 })
 
 const checkTrollZombie = async () => {
     const response = await fetch('https://zombie-entrando-cocina.vercel.app/api/zombie/1')
-    return checkTrollZombieResponse(response)
+    const body = await response.json()
+    return checkTrollZombieResponse(body)
 }
 
 const checkTrollZombieResponse = (response) => {
@@ -241,4 +240,19 @@ test('Check Zombie API possible responses', () => {
     const { troll: troll2, trollDate } = checkTrollZombieResponse(zombieTrollResponse)
     expect(troll2).toBe(true)
     expect(trollDate).toBe(new Date(2023, 2, 27).getTime())
+})
+
+test('Create an order with zombie troll action from API', async () => {
+    const appInstance = app()
+    const { body: order } = await createOrder(appInstance, testOrder)
+    const { id: orderId, createdAt } = order
+
+    const { troll, trollDate } = await checkTrollZombie()
+    console.log({ troll, trollDate })
+    if (troll) {
+        await modifyOrder(appInstance, orderId, { createdAt: trollDate }, 500)
+    }
+
+    const { body: orderAfterTroll } = await getOrder(appInstance, orderId)
+    expect(orderAfterTroll.createdAt).toBe(createdAt)
 })
