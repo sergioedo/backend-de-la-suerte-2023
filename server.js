@@ -70,7 +70,7 @@ module.exports = (MAX_ORDERS = 5) => {
     *       - $ref: '#/definitions/Order'
     *       - type: object
     *         properties: 
-    *           createdAt:
+    *           dispatchedAt:
     *             type: string
     *             description: fecha de procesado de la comanda en formato UNIX timestamp
     *             example: "1679265217763"
