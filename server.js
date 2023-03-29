@@ -4,6 +4,7 @@ const swaggerJsdoc = require('swagger-jsdoc')
 const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
 const ordersModule = require('./orders')
+const path = require('path')
 
 const options = {
     definition: {
@@ -373,6 +374,8 @@ module.exports = (MAX_ORDERS = 5) => {
     })
 
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+    app.use(express.static(path.join(__dirname, 'app', 'dist')));
 
     return app
 }
